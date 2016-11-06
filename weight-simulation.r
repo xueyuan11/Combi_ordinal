@@ -156,7 +156,7 @@ proc.time()-ptm
 ##Computer Type I error and power
 library(xlsx)
 
-p=0.9
+p=0.05
 alpha<-apply(sim0s$pval,2,function(x){sum(x<p)/NREPL})
 alpha<-apply(sim0s$pval<p,2,mean,rm.na=T)
 beta=matrix(0,23,3)
@@ -167,7 +167,7 @@ beta[,3]<-apply(sim3s$pval<p,2,mean,rm.na=T)
 
 result<-cbind(alpha,beta)
 
-rownames(result)=c("T1emp", "T2emp", "T3emp", "T1s", "T2s","T3s","X linear","X catego","iso","Spline","Cob0","Cob1","Cob2","Cob3","Cob4","Cob5","Cob6","Cob7","Cob8","Cob9","Cob10")
+rownames(result)=c("T1emp", "T2emp", "T3emp","CobT1","CobT2", "T1s", "T2s","T3s","X linear","X catego","iso","Spline","Cob0","Cob1","Cob2","Cob3","Cob4","Cob5","Cob6","Cob7","Cob8","Cob9","Cob10")
 colnames(result)=c("Null","Linear","Nonlinear","Nonmontonic")
 
 # setwd("H:/ordinal data/simulation/Comb")
