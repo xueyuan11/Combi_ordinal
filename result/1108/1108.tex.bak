@@ -1,0 +1,84 @@
+\documentclass{report}
+ \usepackage{CJK}
+ \usepackage{amsmath,amsfonts,latexsym,amssymb}
+ \usepackage{indentfirst}
+ \usepackage{geometry}%页边距
+ \pagestyle{plain}
+\usepackage{graphicx}
+ \usepackage{enumerate}
+ \usepackage{bm}
+\linespread{1.6}
+\geometry{left=2.0cm,right=2.0cm,top=2.5cm,bottom=2.5cm}
+
+
+
+ \begin{document}
+
+\begin{CJK*}{GBK}{song}
+
+
+
+
+\subsection{Generate ordinal data(具体产生算法正确与否有待讨论)}
+Deriving from the (Li 2010 JASA),but don't generate the covariate Z.
+
+The specifics of our four generating scenarios are as follows: we first generated X with five categories using th proportion odds model
+\begin{equation*}
+  P(X\leq i)=[1+exp(-(\alpha_i^X+\beta^XZ))]^{-1}
+\end{equation*}
+with $\alpha^X=(\alpha_1^X,\alpha_2^X,\alpha_3^X,\alpha_4^X)=(-1,0,1,2)$.The Y was generated with four levels using the proportional odds model
+\begin{equation*}
+  P(Y\leq j)=[1+exp(-(\alpha_i^Y+\beta^YZ+\eta_1I_{\{X=1\}}+\eta_2I_{\{X=2\}}+\dots+\eta_5I_{\{X=5\}}))]^{-1}
+\end{equation*}
+with $\alpha^Y=(\alpha_1^Y,\alpha_2^Y,\alpha_3^Y)=(-1,0,1)$,and $\bm{\eta}=(\eta_1,\eta_2,\dots,\eta_5)$ specified as
+\begin{enumerate}
+  \item $\bm{\eta}=(0,0,0,0,0)$(the null)
+  \item $\bm{\eta}=(-0.4,-0.2,0,0,2,0,4)$(linear effect)
+  \item $\bm{\eta}=(-0.30,-0.18,0.20,0.22,0.24)$(monotonic nonlinear effect)
+  \item $\bm{\eta}=(-0.2,0,0.2,0.-0.2)$(nonmonotonic effect)
+\end{enumerate}
+
+\subsection{The process of simulation(具体算法正确与否有待讨论)}
+
+
+\textbf{Li's process}
+\begin{itemize}
+  \item Generate a data sets D1,consisting N=500 subjects, computing the statistic
+  \item Relying on D1 ,generate Nemp=1000 data sets as the null distribution, computing a p-value.
+  \item Repeating step1-step2 Nrepl=1000. gain Nrepl=1000 p-value,computing the Type I error and power
+\end{itemize}
+
+My process(Different from the (Li 2010 JSAS)'s process)
+\begin{itemize}
+  \item Simulate the \emph{null distribution}.
+
+    Generate Nrep=1000000 datasets from the null hypothesis ，each consisting of N=500 subjects. computer Nrep three statistics.
+  \item Computer the \emph{Type I error}:
+
+  Generate Nreptest=100000 datasets from the null hypothesis ，each consisting of N subjects. computer Nreptest three statistics.
+  \item Computer the\emph{ power}
+
+   Generate Nreptest datasets from the alternative hypothesis，each consisting of N subjects. computer Nreptest three statistics.
+\end{itemize}
+
+
+\subsection{The result}
+
+Nrep=1000000,Nreptest=100000,N=500,Time=26400.44s=7.3h
+ \begin{center}
+	\begin{tabular}{cccccc}
+   \multicolumn{5}{c}{{\bf Table 1.} The result of the three statistics}:Type I error and power\\\hline
+    & \multicolumn{4}{c}{Simulation scenarios}\\\cline{2-5}
+    Analysis method&Null	&Linear	&Nonlinear	&Nonmonotonic \\\hline
+T1&	0.04948	&0.75114&	0.57597&	0.28759\\
+T2&	0.04999	&0.78369&	0.47814	&0.11663\\
+T3&0.04964	&0.89773&	0.65047	&0.17715\\
+X linear&	0.04906&	0.91231	&0.59056	&0.07404\\
+X categorcial&	0.04974&	0.76194&	0.58867&	0.29465\\
+Spline	&0.04926	&0.85319	&0.63418&	0.38027\\\hline
+
+	\end{tabular}
+\end{center}
+
+\end{CJK*}
+\end{document}
