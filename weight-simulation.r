@@ -14,7 +14,7 @@
 
 
 #### R library requirement:
-## Design package is needed for the lrm() function.
+## rms package is needed for the lrm() function.
 
 
 #### functions defined in addition to those in COBOT-analysis.r :
@@ -30,7 +30,7 @@
 ##   z: a vector or matrix of numerical covariate values
 ## The lengths of y, x, z (or nrow(z) if matrix) must be the same.
 #S1 
-setwd("G:/Combi_ordinal")
+setwd("C:/Users/o0/Desktop/ordinal data/simulation/Combi_ordinal")
 #### Need all functions defined in COBOT-analysis.r
 source("cobot-analysis.r")
 
@@ -92,24 +92,18 @@ generate.data = function(alphax, betax, alphay, betay, eta, N) {
   
 
 #### Function for simulation
-ordinalsim = function(alphax, betax, alphay, betay, eta, N, Nemp, NREPL,w) {
+ordinalsim = function(alphax, betax, alphay, betay, eta, N, Nemp, NREPL) {
   require(rms)
 
   pval.emp = matrix(,NREPL,7)
-#   colnames(pval.emp) = c("T1a", "T2a", "T3a")
   pval.score = matrix(,NREPL,3)
-#   colnames(pval.score) = c("T1s", "T2s", "T3s")
    pval.spl = pval.iso = NULL
-  # m=length(w)
-  # pval.cob=matrix(,NREPL,m)
-#   colnames(pval.cob)=c("Cob0","Cob1","Cob2","Cob3","Cob4","Cob5","Cob6","Cob7","Cob8","Cob9","Cob10")
 
   for (ii in 1:NREPL) {
     data = generate.data(alphax, betax, alphay, betay, eta, N)
     pval.emp[ii,] = COBOT.emp(data, Nemp)
     pval.score[ii,] = COBOT.scores(data)
-   modspline = lrm(y ~ z + rcs(x, 3), data=data)
-    # pval.cob[ii,]=(1-w)*pval.emp[ii,4]+w*pval.emp[ii,5]
+    modspline = lrm(y ~ z + rcs(x, 3), data=data)
     pval.spl[ii] = anova(modspline)[2,3]
    pval.iso[ii] = isotonic(data)
   }
@@ -123,53 +117,69 @@ ordinalsim = function(alphax, betax, alphay, betay, eta, N, Nemp, NREPL,w) {
 
 
 #### Start simulations
+
+
 N = 50
 Nemp = 100
 NREPL = 10
-
+# # 1. X_5. Y_4
+# alphay = c(-1, 0, 1)
+# betay = -.5
+# alphax = c(-1, 0, 1, 2)
+# betax = 1
+# eta0 = rep(0,5)
+# eta1 = 0.2 * (-2:2)
+# eta2= c(-.3, .18, .20, .22, .24)
+# eta3 = 0.1 * c(-2,0,2,0,-2)
+#2. X_10. Y_4
 alphay = c(-1, 0, 1)
 betay = -.5
-alphax = c(-1, 0, 1, 2)
+alphax = c(-4:4)
 betax = 1
-# s=length(alphay)+1
-# t=length(alphax)+1
-# w=(0:10)/10
+eta0 = rep(0,10)
+eta1 = 0.2 * (-4:5)
+eta2= c(-.65,-.54,-.3, .18, .20, .22, .24,.34,.36,.45)
+eta3 = 0.1 * c(-2,0,2,0,-2,-2,0,2,0,-2)
 
-eta = rep(0,5)
-sim0s = ordinalsim(alphax, betax, alphay, betay, eta, N, Nemp, NREPL,w)
+# #null distribution
+sim0s = ordinalsim(alphax, betax, alphay, betay, eta, N, Nemp, NREPL)
 
-eta = 0.2 * (-2:2)
-sim1s = ordinalsim(alphax, betax, alphay, betay, eta, N, Nemp, NREPL,w)
 
-eta = c(-.3, .18, .20, .22, .24)
-sim2s = ordinalsim(alphax, betax, alphay, betay, eta, N, Nemp, NREPL,w)
+#linear
 
-eta = 0.1 * c(-2,0,2,0,-2)
-sim3s = ordinalsim(alphax, betax, alphay, betay, eta, N, Nemp, NREPL,w)
+sim1s = ordinalsim(alphax, betax, alphay, betay, eta2, N, Nemp, NREPL)
 
-proc.time()-ptm
+#nonlinear and monoto
+
+sim2s = ordinalsim(alphax, betax, alphay, betay, eta3, N, Nemp, NREPL)
+
+#non-monoto
+
+sim3s = ordinalsim(alphax, betax, alphay, betay, eta, N, Nemp, NREPL)
+
+
 
 
 ##Computer Type I error and power
 library(xlsx)
 
 p=0.05
-alpha<-apply(sim0s$pval,2,function(x){sum(x<p)/NREPL})
+
 alpha<-apply(sim0s$pval<p,2,mean,rm.na=T)
-beta=matrix(0,12,3)
-beta[,1]<-apply(sim1s$pval<p,2,mean,rm.na=T)
+beta=matrix(0,12,1)
+beta<-apply(sim1s$pval<p,2,mean,rm.na=T)
 beta[,2]<-apply(sim2s$pval<p,2,mean,rm.na=T)
 beta[,3]<-apply(sim3s$pval<p,2,mean,rm.na=T)
 
-
 result<-cbind(alpha,beta)
 
-rownames(result)=c("T1emp", "T2emp", "T3emp","X linear","X catego","CobT1","CobT2", "T1s", "T2s","T3s","iso","Spline")
+
+rownames(alpha)=c("T1emp", "T2emp", "T3emp","X linear","X catego","CobT1","CobT2", "T1s", "T2s","T3s","iso","Spline")
 colnames(result)=c("Null","Linear","Nonlinear","Nonmontonic")
 
-# setwd("H:/ordinal data/simulation/Comb")
-write.xlsx(x = result, file = "Cobresult.xlsx",
-           sheetName = "Cob", row.names =TRUE,col.names = TRUE)
+setwd("J:/Onedirve/OneDrive/Documents/result/cob/X_10_Y_4")
+write.xlsx(x = alpha, file = "result_10_4.xlsx",
+           sheetName = "X_10_Y_4", row.names =TRUE,col.names = TRUE)
 
 # apply(result,1,function(x){paste(collapse = " & ",x)})
 # write.table(result, file = "foo.txt", sep = "&", row.names=FALSE, col.names=FALSE,
