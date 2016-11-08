@@ -180,9 +180,11 @@ COBOT.stat = function(data, nx0, ny0) {
   
   T4=-2*log(pval.con)-2*log(pval.dis)
   w=1/sqrt(nx-1)
-  T5=-2*log(pval.con)*(1-w)-2*w*log(pval.dis)
+  T5=min(pval.dis,pval.con)
+  ta=0.05
+  T6=-2*log(pval.con)*(pval.con<ta)-2*log(pval.dis)*(pval.dis<ta)
   
-  list(stat=c(T1,T2,T3,T4,T5),pval=c(pval.con,pval.dis),
+  list(stat=c(T1,T2,T3,T4,T5,T6),pval=c(pval.con,pval.dis),
        pred.probx=pred.probx,
        pred.proby=pred.proby)
 }
@@ -232,7 +234,7 @@ COBOT.emp = function(data, Nemp=1000) {
   xemp = xyemp %/% ny + 1
   yemp = xyemp %% ny + 1
 
-  test.stat.emp = matrix(,5,Nemp)
+  test.stat.emp = matrix(,6,Nemp)
   for(j in 1:Nemp) {
     test.stat.emp[,j] = COBOT.stat(list(x=xemp[,j], y=yemp[,j], z=data$z),
                    nx, ny)$stat
