@@ -36,34 +36,6 @@ source("cobot-analysis.r")
 
 ptm<-proc.time()
 #### Isotonic regression
-isotonic = function(data) {
-  require(rms)
-
-  mod = lrm(y ~ z + x,data=list(y=data$y,z=data$z,x=as.factor(data$x)))
-
-  xdata = as.factor(data$x)
-  xlevels = length(levels(xdata))
-  coeff = c(0, rev(rev(mod$coeff)[1:(xlevels-1)]))
-  xcoeff = coeff[as.numeric(xdata)]
-
-  #### R's isoreg() function only assumes increasing
-  #### The iKnots output of the function can give incorrect results
-  iso = iso1 = isoreg(xdata, xcoeff)
-  iso2 = isoreg(xdata, -xcoeff)
-  if(length(unique(iso1$yf)) < length(unique(iso2$yf))) iso = iso2
-
-  #### Define new x categories: if no jump, all into a single category
-  jumppts = which(diff(iso$yf) > 0)
-  newx = rep(0, length(xdata))
-  if(length(jumppts) > 0) {
-    xrank = rank(xdata, ties.method="min")
-    for(i in 1:length(jumppts))
-      newx = newx + (xrank > jumppts[i])
-  }
-
-  newmod = lrm(y ~ z + x,data=list(y=data$y,z=data$z,x=as.factor(newx)))
-  anova(newmod)[2,3]
-}
 
 
 #### Function for simulating data
@@ -95,70 +67,81 @@ generate.data = function(alphax, betax, alphay, betay, eta, N) {
 ordinalsim = function(alphax, betax, alphay, betay, eta, N, Nemp, NREPL) {
   require(rms)
 
-  pval.emp = matrix(,NREPL,7)
-  pval.score = matrix(,NREPL,3)
-   pval.spl = pval.iso = NULL
+  pval.emp = matrix(,NREPL,9)
 
   for (ii in 1:NREPL) {
     data = generate.data(alphax, betax, alphay, betay, eta, N)
     pval.emp[ii,] = COBOT.emp(data, Nemp)
-    pval.score[ii,] = COBOT.scores(data)
-    modspline = lrm(y ~ z + rcs(x, 3), data=data)
-    pval.spl[ii] = anova(modspline)[2,3]
-   pval.iso[ii] = isotonic(data)
   }
 
-   
    param = list(alpha.yz=alphay, beta.yz=betay,
     alpha.xz=alphax, beta.xz=betax, eta=eta,
     N=N, Nemp=Nemp, Nrepl=NREPL)
-  list(par= param, pval = data.frame(pval.emp, pval.score, pval.spl, pval.iso))
+  list(par= param, pval = pval.emp)
 }
 
 
 #### Start simulations
+ptm=proc.time()
 
-
-N = 50
-Nemp = 100
-NREPL = 10
-# # 1. X_5. Y_4
+N = 500
+Nemp = 1000
+NREPL = 1
+# 1. X_5. Y_4
+alphay = c(-1, 0, 1)
+betay = -1
+alphax = c(-1, 0, 1, 2)
+betax = 1
+eta0 = rep(0,5)
+eta1 = 0.2 * (-2:2)
+eta2= c(-.3, .18, .20, .22, .24)
+eta3 = 0.1 * c(-2,0,2,0,-2)
+# #2. X_10. Y_4
 # alphay = c(-1, 0, 1)
 # betay = -.5
-# alphax = c(-1, 0, 1, 2)
+# alphax = c(-4:4)
 # betax = 1
-# eta0 = rep(0,5)
-# eta1 = 0.2 * (-2:2)
-# eta2= c(-.3, .18, .20, .22, .24)
-# eta3 = 0.1 * c(-2,0,2,0,-2)
-#2. X_10. Y_4
+# eta0 = rep(0,10)
+# eta1 = 0.2 * (-4:5)
+# eta2= c(-.65,-.54,-.3, .18, .20, .22, .24,.34,.36,.45)
+# eta3 = 0.1 * c(-2,0,2,0,-2,-2,0,2,0,-2)
+# #3 X_7,Y_4
+# alphay = c(-1, 0, 1)
+# betay = -.5
+# alphax = c(-2:3)
+# betax = 1
+# eta0 = rep(0,7)
+# eta1 = 0.2 * (-3:3)
+# eta2= c(-.3, .18, .20, .22, .24,.34,.45)
+# eta3 = 0.1 * c(0,2,0,-2,-2,0,2)
+### 4 X_3Y_4
 alphay = c(-1, 0, 1)
 betay = -.5
-alphax = c(-4:4)
+alphax = c(0,1)
 betax = 1
-eta0 = rep(0,10)
-eta1 = 0.2 * (-4:5)
-eta2= c(-.65,-.54,-.3, .18, .20, .22, .24,.34,.36,.45)
-eta3 = 0.1 * c(-2,0,2,0,-2,-2,0,2,0,-2)
+eta0 = rep(0,3)
+eta1 = 0.2 * (-1:1)
+eta2= c(-.3, .18, .20)
+eta3 = 0.1 * c(-2,0,2)
 
 # #null distribution
-sim0s = ordinalsim(alphax, betax, alphay, betay, eta, N, Nemp, NREPL)
-
+sim0s = ordinalsim(alphax, betax, alphay, betay, eta0, N, Nemp, NREPL)
+proc.time()-ptm
 
 #linear
 
-sim1s = ordinalsim(alphax, betax, alphay, betay, eta2, N, Nemp, NREPL)
+sim1s = ordinalsim(alphax, betax, alphay, betay, eta1, N, Nemp, NREPL)
 
 #nonlinear and monoto
 
-sim2s = ordinalsim(alphax, betax, alphay, betay, eta3, N, Nemp, NREPL)
+sim2s = ordinalsim(alphax, betax, alphay, betay, eta2, N, Nemp, NREPL)
 
 #non-monoto
 
-sim3s = ordinalsim(alphax, betax, alphay, betay, eta, N, Nemp, NREPL)
+sim3s = ordinalsim(alphax, betax, alphay, betay, eta3, N, Nemp, NREPL)
 
 
-
+proc.time()-ptm
 
 ##Computer Type I error and power
 library(xlsx)
@@ -166,20 +149,17 @@ library(xlsx)
 p=0.05
 
 alpha<-apply(sim0s$pval<p,2,mean,rm.na=T)
-beta=matrix(0,12,1)
-beta<-apply(sim1s$pval<p,2,mean,rm.na=T)
+beta=matrix(0,11,3)
+beta[,1]<-apply(sim1s$pval<p,2,mean,rm.na=T)
 beta[,2]<-apply(sim2s$pval<p,2,mean,rm.na=T)
 beta[,3]<-apply(sim3s$pval<p,2,mean,rm.na=T)
 
 result<-cbind(alpha,beta)
 
 
-rownames(alpha)=c("T1emp", "T2emp", "T3emp","X linear","X catego","CobT1","CobT2", "T1s", "T2s","T3s","iso","Spline")
+rownames(result)=c("T1emp", "T2emp", "T3emp","CobT1_y~x","CobT2_y~x","CobT1","CobT2",
+                  "Y~X linear","Y~X catego","X~Y linear","X~Y catego")
 colnames(result)=c("Null","Linear","Nonlinear","Nonmontonic")
 
-setwd("J:/Onedirve/OneDrive/Documents/result/cob/X_10_Y_4")
-write.xlsx(x = alpha, file = "result_10_4.xlsx",
-           sheetName = "X_10_Y_4", row.names =TRUE,col.names = TRUE)
-
-# apply(result,1,function(x){paste(collapse = " & ",x)})
-# write.table(result, file = "foo.txt", sep = "&", row.names=FALSE, col.names=FALSE,
+write.xlsx(x = alpha, file = "result.xlsx",
+           sheetName = "result", row.names =TRUE,col.names = TRUE)
