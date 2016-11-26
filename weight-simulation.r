@@ -67,7 +67,7 @@ generate.data = function(alphax, betax, alphay, betay, eta, N) {
 ordinalsim = function(alphax, betax, alphay, betay, eta, N, Nemp, NREPL) {
   require(rms)
 
-  pval.emp = matrix(,NREPL,9)
+  pval.emp = matrix(,NREPL,11)
 
   for (ii in 1:NREPL) {
     data = generate.data(alphax, betax, alphay, betay, eta, N)
@@ -85,8 +85,8 @@ ordinalsim = function(alphax, betax, alphay, betay, eta, N, Nemp, NREPL) {
 ptm=proc.time()
 
 N = 500
-Nemp = 1000
-NREPL = 1
+Nemp = 100
+NREPL = 10
 # 1. X_5. Y_4
 alphay = c(-1, 0, 1)
 betay = -1
@@ -114,15 +114,15 @@ eta3 = 0.1 * c(-2,0,2,0,-2)
 # eta1 = 0.2 * (-3:3)
 # eta2= c(-.3, .18, .20, .22, .24,.34,.45)
 # eta3 = 0.1 * c(0,2,0,-2,-2,0,2)
-### 4 X_3Y_4
-alphay = c(-1, 0, 1)
-betay = -.5
-alphax = c(0,1)
-betax = 1
-eta0 = rep(0,3)
-eta1 = 0.2 * (-1:1)
-eta2= c(-.3, .18, .20)
-eta3 = 0.1 * c(-2,0,2)
+# ### 4 X_3Y_4
+# alphay = c(-1, 0, 1)
+# betay = -.5
+# alphax = c(0,1)
+# betax = 1
+# eta0 = rep(0,3)
+# eta1 = 0.2 * (-1:1)
+# eta2= c(-.3, .18, .20)
+# eta3 = 0.1 * c(-2,0,2)
 
 # #null distribution
 sim0s = ordinalsim(alphax, betax, alphay, betay, eta0, N, Nemp, NREPL)

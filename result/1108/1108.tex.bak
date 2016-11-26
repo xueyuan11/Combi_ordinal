@@ -18,67 +18,238 @@
 
 
 
-
-\subsection{Generate ordinal data(具体产生算法正确与否有待讨论)}
+\section{X：5，Y：4}
+\subsection{Generate ordinal data(same as the method in Li's paper)}
 Deriving from the (Li 2010 JASA),but don't generate the covariate Z.
 
 The specifics of our four generating scenarios are as follows: we first generated X with five categories using th proportion odds model
 \begin{equation*}
   P(X\leq i)=[1+exp(-(\alpha_i^X+\beta^XZ))]^{-1}
 \end{equation*}
-with $\alpha^X=(\alpha_1^X,\alpha_2^X,\alpha_3^X,\alpha_4^X)=(-1,0,1,2)$.The Y was generated with four levels using the proportional odds model
+with $\alpha^X=(\alpha_1^X,\alpha_2^X,\alpha_3^X,\alpha_4^X)=(-1,0,1,2),\beta^X=1$.The Y was generated with four levels using the proportional odds model
+\begin{equation*}
+  P(Y\leq j)=[1+exp(-(\alpha_i^Y+\beta^YZ+\eta_1I_{\{X=1\}}+\eta_2I_{\{X=2\}}+\dots+\eta_5I_{\{X=5\}}))]^{-1}
+\end{equation*}
+with $\alpha^Y=(\alpha_1^Y,\alpha_2^Y,\alpha_3^Y)=(-1,0,1),\beta^Y=0.5$,and $\bm{\eta}=(\eta_1,\eta_2,\dots,\eta_5)$ specified as
+
+\begin{enumerate}
+  \item $\bm{\eta}=(0,0,0,0,0)$(the null)
+  \item $\bm{\eta}=(-0.4,-0.2,0,0.2,0.4)$(linear effect)
+  \item $\bm{\eta}=(-0.30,-0.18,0.20,0.22,0.24)$(monotonic nonlinear effect)
+  \item $\bm{\eta}=(-0.2,0,0.2,0,-0.2)$(nonmonotonic effect)
+\end{enumerate}
+
+
+\subsection{The result}
+\begin{itemize}
+  \item Parameter as above(The same as Li) \\
+  NREPL=1000,Nemp=1000,N=500,Time~9h
+ \begin{center}
+	\begin{tabular}{cccccc}
+   \multicolumn{5}{c}{{\bf Table 2.} The result of the three statistics}:Type I error and power\\\hline
+    & \multicolumn{4}{c}{Simulation scenarios}\\\cline{2-5}
+    Analysis method&Null	&Linear	&Nonlinear	&Nonmonotonic \\\hline
+T1emp&0.056&0.867&0.543&0.078\\
+T2emp&0.059&0.87&0.555&0.08\\
+T3emp&0.061&0.87&0.56&0.081\\
+CobT1&0.054&0.856&0.582&0.182\\
+T1s&0.052&0.864&0.538&0.076\\
+T2s&0.057&0.874&0.565&0.078\\
+T3s&0.056&0.874&0.565&0.078\\
+X linear&0.055&0.881&0.499&0.067\\
+X catego&0.054&0.706&0.537&0.281\\
+iso&0.063&0.821&0.592&0.365\\
+Spline&0.071&0.791&0.579&0.221\\\hline
+
+	\end{tabular}
+\end{center}
+  \item $\beta^Y=1$,NREPL=1000,Nemp=1000,N=500,Time=47354.37
+\begin{center}
+	\begin{tabular}{cccccc}
+   \multicolumn{5}{c}{{\bf Table 3.} The result of the three statistics}:Type I error and power\\\hline
+    & \multicolumn{4}{c}{Simulation scenarios}\\\cline{2-5}
+    Analysis method&Null	&Linear	&Nonlinear	&Nonmonotonic \\\hline
+    T1emp&0.069&0.828&0.525&0.063\\
+T2emp&0.05&0.832&0.552&0.06\\
+T3emp&0.052&0.831&0.556&0.061\\
+Cob2&0.06&0.826&0.555&0.168\\
+Cob4&0.055&0.825&0.571&0.1\\
+min2&0.056&0.795&0.515&0.212\\
+Y~X linear&0.059&0.857&0.483&0.058\\
+Y~X catego&0.057&0.655&0.483&0.256\\
+X~Y linear&0.056&0.823&0.55&0.068\\
+X~Y catego&0.056&0.685&0.387&0.064\\\hline
+
+	\end{tabular}
+\end{center}
+
+  \item  Set the $\eta$ as
+\begin{enumerate}
+  \item $\bm{\eta}=(0,0,0,0,0)$(the null)
+  \item $\bm{\eta}=(-0.6,-0.3,0,0.3,0.6)$(linear effect)
+  \item $\bm{\eta}=(-0.30,-0.18,0.20,0.22,0.5)$(monotonic nonlinear effect)
+  \item $\bm{\eta}=(-0.1,0,0.2,0.1,-0.2)$(nonmonotonic effect)
+\end{enumerate}
+NREPL=1000,Nemp=1000,N=500,Time=44460.03
+\begin{center}
+	\begin{tabular}{cccccc}
+   \multicolumn{5}{c}{{\bf Table 4.} The result of the three statistics}:Type I error and power\\\hline
+    & \multicolumn{4}{c}{Simulation scenarios}\\\cline{2-5}
+    Analysis method&Null	&Linear	&Nonlinear	&Nonmonotonic \\\hline
+T1emp&0.057&0.999&0.802&0.043\\
+T2emp&0.054&0.999&0.8&0.055\\
+T3emp&0.054&0.999&0.802&0.054\\
+Cob2&0.063&0.996&0.793&0.092\\
+Cob4&0.056&0.998&0.797&0.067\\
+min2&0.06&0.997&0.764&0.118\\
+min4&0.055&0.998&0.736&0.107\\
+Y~X linear&0.063&1&0.783&0.048\\
+Y~X catego&0.055&0.98&0.698&0.148\\
+X~Y linear&0.062&0.998&0.805&0.055\\
+X~Y catego&0.048&0.982&0.644&0.052\\\hline
+	\end{tabular}
+\end{center}
+
+\item  Set the $\eta$ as
+\begin{enumerate}
+  \item $\bm{\eta}=(0,0,0,0,0)$(the null)
+  \item $\bm{\eta}=(-0.2,-0.1,0,0.1,0.2)$(linear effect)
+  \item $\bm{\eta}=(-0.21,-0.18,0.20,0.22,0.24)$(monotonic nonlinear effect)
+  \item $\bm{\eta}=(-0.25,0,0.2,0,-0.15)$(nonmonotonic effect)
+\end{enumerate}
+NREPL=1000,Nemp=1000,N=500,Time=40298.0
+\begin{center}
+	\begin{tabular}{cccccc}
+   \multicolumn{5}{c}{{\bf Table 5.} The result of the three statistics}:Type I error and power\\\hline
+    & \multicolumn{4}{c}{Simulation scenarios}\\\cline{2-5}
+    Analysis method&Null	&Linear	&Nonlinear	&Nonmonotonic \\\hline
+    T1emp&0.057&0.343&0.576&0.113\\
+T2emp&0.061&0.345&0.581&0.112\\
+T3emp&0.062&0.345&0.582&0.11\\
+Cob2&0.052&0.338&0.596&0.206\\
+Cob4&0.054&0.345&0.598&0.146\\
+min2&0.056&0.316&0.555&0.247\\
+min4&0.055&0.279&0.528&0.217\\
+Y~X linear&0.053&0.362&0.543&0.088\\
+Y~X catego&0.045&0.205&0.531&0.305\\
+X~Y linear&0.061&0.338&0.583&0.108\\
+X~Y catego&0.051&0.226&0.427&0.091\\\hline
+	\end{tabular}
+\end{center}
+
+\item  Set the $\eta$ as
+\begin{enumerate}
+  \item $\bm{\eta}=(0,0,0,0,0)$(the null)
+  \item $\bm{\eta}=(-0.3,-0.15,0,0.15,0.3)$(linear effect)
+  \item $\bm{\eta}=(-0.21,-0.18,0.10,0.22,0.24)$(monotonic nonlinear effect)
+  \item $\bm{\eta}=(-0.35,0.4,0.2,0,-0.15)$(nonmonotonic effect)
+\end{enumerate}
+NREPL=1000,Nemp=1000,N=500,Time=41262.45 
+\begin{center}
+	\begin{tabular}{cccccc}
+   \multicolumn{5}{c}{{\bf Table 6.} The result of the three statistics}:Type I error and power\\\hline
+    & \multicolumn{4}{c}{Simulation scenarios}\\\cline{2-5}
+    Analysis method&Null	&Linear	&Nonlinear	&Nonmonotonic \\\hline
+T1emp&0.057&0.343&0.576&0.113\\
+T2emp&0.061&0.345&0.581&0.112\\
+T3emp&0.062&0.345&0.582&0.11\\
+Cob2&0.052&0.338&0.596&0.206\\
+Cob4&0.054&0.345&0.598&0.146\\
+min2&0.056&0.316&0.555&0.247\\
+min4&0.055&0.279&0.528&0.217\\
+Y~X linear&0.053&0.362&0.543&0.088\\
+Y~X catego&0.045&0.205&0.531&0.305\\
+X~Y linear&0.061&0.338&0.583&0.108\\
+X~Y catego&0.051&0.226&0.427&0.091\\\hline
+
+	\end{tabular}
+\end{center}
+\end{itemize}
+
+
+
+
+
+
+
+
+\section{X：10，Y：4}
+\subsection{Generate ordinal data(same as the method in Li's paper)}
+Deriving from the (Li 2010 JASA),but don't generate the covariate Z.
+
+The specifics of our four generating scenarios are as follows: we first generated X with five categories using th proportion odds model
+\begin{equation*}
+  P(X\leq i)=[1+exp(-(\alpha_i^X+\beta^XZ))]^{-1}
+\end{equation*}
+with $\alpha^X=(\alpha_1^X,\alpha_2^X,\alpha_3^X,\alpha_4^X)=(-4 ,-3, -2, -1,  0,  1 , 2,  3,  4)$.The Y was generated with four levels using the proportional odds model
 \begin{equation*}
   P(Y\leq j)=[1+exp(-(\alpha_i^Y+\beta^YZ+\eta_1I_{\{X=1\}}+\eta_2I_{\{X=2\}}+\dots+\eta_5I_{\{X=5\}}))]^{-1}
 \end{equation*}
 with $\alpha^Y=(\alpha_1^Y,\alpha_2^Y,\alpha_3^Y)=(-1,0,1)$,and $\bm{\eta}=(\eta_1,\eta_2,\dots,\eta_5)$ specified as
 \begin{enumerate}
-  \item $\bm{\eta}=(0,0,0,0,0)$(the null)
-  \item $\bm{\eta}=(-0.4,-0.2,0,0,2,0,4)$(linear effect)
-  \item $\bm{\eta}=(-0.30,-0.18,0.20,0.22,0.24)$(monotonic nonlinear effect)
-  \item $\bm{\eta}=(-0.2,0,0.2,0.-0.2)$(nonmonotonic effect)
+  \item $\bm{\eta}=(0,0,0,0,0,0,0,0,0,0)$(the null)
+  \item $\bm{\eta}=(-0.8 , -0.6 , -0.4 , -0.2 , 0 , 0.2 , 0.4 , 0.6 , 0.8 , 1)$(linear effect)
+  \item $\bm{\eta}=(-0.65 , -0.54 , -0.3 , 0.18 , 0.2 , 0.22 , 0.24 , 0.34 , 0.36 , 0.45)$(monotonic nonlinear effect)
+  \item $\bm{\eta}=(-0.2 , 0 , 0.2 , 0 , -0.2 , -0.2 , 0 , 0.2 , 0 , -0.2)$(nonmonotonic effect)
 \end{enumerate}
-
-\subsection{The process of simulation(具体算法正确与否有待讨论)}
-
-
-\textbf{Li's process}
-\begin{itemize}
-  \item Generate a data sets D1,consisting N=500 subjects, computing the statistic
-  \item Relying on D1 ,generate Nemp=1000 data sets as the null distribution, computing a p-value.
-  \item Repeating step1-step2 Nrepl=1000. gain Nrepl=1000 p-value,computing the Type I error and power
-\end{itemize}
-
-My process(Different from the (Li 2010 JSAS)'s process)
-\begin{itemize}
-  \item Simulate the \emph{null distribution}.
-
-    Generate Nrep=1000000 datasets from the null hypothesis ，each consisting of N=500 subjects. computer Nrep three statistics.
-  \item Computer the \emph{Type I error}:
-
-  Generate Nreptest=100000 datasets from the null hypothesis ，each consisting of N subjects. computer Nreptest three statistics.
-  \item Computer the\emph{ power}
-
-   Generate Nreptest datasets from the alternative hypothesis，each consisting of N subjects. computer Nreptest three statistics.
-\end{itemize}
 
 
 \subsection{The result}
 
-Nrep=1000000,Nreptest=100000,N=500,Time=26400.44s=7.3h
+NREPL=1000,Nemp=1000,N=500,Time=
  \begin{center}
 	\begin{tabular}{cccccc}
    \multicolumn{5}{c}{{\bf Table 1.} The result of the three statistics}:Type I error and power\\\hline
     & \multicolumn{4}{c}{Simulation scenarios}\\\cline{2-5}
     Analysis method&Null	&Linear	&Nonlinear	&Nonmonotonic \\\hline
-T1&	0.04948	&0.75114&	0.57597&	0.28759\\
-T2&	0.04999	&0.78369&	0.47814	&0.11663\\
-T3&0.04964	&0.89773&	0.65047	&0.17715\\
-X linear&	0.04906&	0.91231	&0.59056	&0.07404\\
-X categorcial&	0.04974&	0.76194&	0.58867&	0.29465\\
-Spline	&0.04926	&0.85319	&0.63418&	0.38027\\\hline
+T2emp&0.045&0.977&0.559&0.056\\
+T3emp&0.048&0.977&0.561&0.057\\
+X conti&0.039&0.975&0.639&0.123\\
+X catego&0.042&0.979&0.662&0.092\\
+Cob2&0.041&0.983&0.626&0.06\\
+min2&0.045&0.843&0.427&0.167\\
+T1s&0.039&0.978&0.504&0.059\\
+T2s&0.048&0.977&0.562&0.056\\
+T3s&0.048&0.977&0.561&0.056\\
+iso&0.046&0.969&0.647&0.082\\
+Spline&0.06&0.923&0.626&0.145\\\hline
+
 
 	\end{tabular}
 \end{center}
 
+\section{X：7，Y：4}
+\subsection{Generate ordinal data(same as the method in Li's paper)}
+Deriving from the (Li 2010 JASA),but don't generate the covariate Z.
+
+The specifics of our four generating scenarios are as follows: we first generated X with five categories using th proportion odds model
+\begin{equation*}
+  P(X\leq i)=[1+exp(-(\alpha_i^X+\beta^XZ))]^{-1}
+\end{equation*}
+with $\alpha^X=(\alpha_1^X,\alpha_2^X,\alpha_3^X,\alpha_4^X)=(-2 , -1 , 0 , 1 , 2 , 3)$.The Y was generated with four levels using the proportional odds model
+\begin{equation*}
+  P(Y\leq j)=[1+exp(-(\alpha_i^Y+\beta^YZ+\eta_1I_{\{X=1\}}+\eta_2I_{\{X=2\}}+\dots+\eta_5I_{\{X=5\}}))]^{-1}
+\end{equation*}
+with $\alpha^Y=(\alpha_1^Y,\alpha_2^Y,\alpha_3^Y)=(-1,0,1)$,and $\bm{\eta}=(\eta_1,\eta_2,\dots,\eta_5)$ specified as
+\begin{enumerate}
+  \item $\bm{\eta}=(0 , 0 , 0 , 0 , 0 , 0 , 0)$(the null)
+  \item $\bm{\eta}=(-0.6 , -0.4 , -0.2 , 0 , 0.2 , 0.4 , 0.6)$(linear effect)
+  \item $\bm{\eta}=(-0.3 , 0.18 , 0.2 , 0.22 , 0.24 , 0.34 , 0.45)$(monotonic nonlinear effect)
+  \item $\bm{\eta}=(0 , 0.2 , 0 , -0.2 , -0.2 , 0 , 0.2)$(nonmonotonic effect)
+\end{enumerate}
+
+
+\subsection{The result}
+
+NREPL=1000,Nemp=1000,N=500,Time=
+ \begin{center}
+	\begin{tabular}{cccccc}
+   \multicolumn{5}{c}{{\bf Table 1.} The result of the three statistics}:Type I error and power\\\hline
+    & \multicolumn{4}{c}{Simulation scenarios}\\\cline{2-5}
+    Analysis method&Null	&Linear	&Nonlinear	&Nonmonotonic \\\hline
+
+
+	\end{tabular}
+\end{center}
 \end{CJK*}
 \end{document}

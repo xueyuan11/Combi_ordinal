@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2016.8.29)  8 NOV 2016 10:11
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdflatex 2016.8.29)  13 NOV 2016 23:14
 entering extended mode
 **C:/Users/o0/Desktop/ordinal*data/simulation/Combi_ordinal/result/1108/1108.te
 x
@@ -347,19 +347,27 @@ LaTeX Font Info:    Font shape `U/lasy/b/n' in size <7> not available
 (Font)              Font shape `U/lasy/m/n' tried instead on input line 26.
 LaTeX Font Info:    Font shape `U/lasy/b/n' in size <5> not available
 (Font)              Font shape `U/lasy/m/n' tried instead on input line 26.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 45.
+
+(D:\CTEX\MiKTeX\tex\latex\base\omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 45.
  [1
 
-{D:/CTEX/UserData/pdftex/config/pdftex.map{Unicode.sfd}{UGBK.sfd}}] [2] [3]
+{D:/CTEX/UserData/pdftex/config/pdftex.map{Unicode.sfd}{UGBK.sfd}}] [2] [3] [4]
+ [5] [6] [7]
 ("C:\Users\o0\Desktop\ordinal data\simulation\Combi_ordinal\result\1108\1108.au
 x") ) 
 Here is how much of TeX's memory you used:
- 3682 strings out of 495354
- 43638 string characters out of 3183859
- 108239 words of memory out of 3000000
- 6795 multiletter control sequences out of 15000+200000
+ 3700 strings out of 495354
+ 43909 string characters out of 3183859
+ 110239 words of memory out of 3000000
+ 6810 multiletter control sequences out of 15000+200000
  10022 words of font info for 40 fonts, out of 3000000 for 9000
  14 hyphenation exceptions out of 8191
- 27i,7n,28p,309b,384s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 27i,7n,28p,309b,449s stack positions out of 5000i,500n,10000p,200000b,50000s
 <D:/CTEX/CTeX/fonts/truetype/chinese/simsun.ttf><D:/CTEX/MiKTeX/fonts/type
 1/public/amsfonts/cm/cmbx10.pfb><D:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/
 cmbx12.pfb><D:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><D:/CTEX/M
@@ -368,9 +376,9 @@ ic/amsfonts/cm/cmmib10.pfb><D:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10
 .pfb><D:/CTEX/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><D:/CTEX/MiKTeX/fo
 nts/type1/public/amsfonts/cm/cmsy10.pfb><D:/CTEX/MiKTeX/fonts/type1/public/amsf
 onts/cm/cmsy7.pfb>
-Output written on 1108.pdf (3 pages, 108459 bytes).
+Output written on 1108.pdf (7 pages, 115652 bytes).
 PDF statistics:
- 52 PDF objects out of 1000 (max. 8388607)
+ 66 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
